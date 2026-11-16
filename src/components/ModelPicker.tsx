@@ -33,7 +33,16 @@ export const ModelPicker: React.FC = () => {
     setError(null);
     try {
       const r = await fetch('/api/openrouter/models');
-      const j = await r.json();
+      // Read as text first: behind a proxy / static host the answer can be an HTML page instead of JSON.
+      const text = await r.text();
+      let j: any = null;
+      try {
+        j = JSON.parse(text);
+      } catch {
+        throw new Error(
+          `The server did not answer the model list request (status ${r.status}, not JSON). The app must be started with the Express server ("npm run dev" or "npm start"), and the proxy must forward /api to it.`
+        );
+      }
       setKeyConfigured(!!j.keyConfigured);
       if (!r.ok) throw new Error(j.error || `Server responded with status ${r.status}`);
       setModels(j.models);
@@ -59,7 +68,7 @@ export const ModelPicker: React.FC = () => {
         body: JSON.stringify({ key: keyText }),
       });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.error || `Server responded with status ${r.status}`);
+      if (!r.ok) throw new Error(j.error || `Server responded with status ${r.status}${r.status === 404 ? ' (the /api routes are not reachable: start the Express server)' : ''}`);
       setKeyText('');
       setKeySaved(true);
       setKeyConfigured(true);
@@ -130,11 +139,16 @@ export const ModelPicker: React.FC = () => {
                 className="w-full pl-8 pr-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
               />
             </div>
-            {keyConfigured === false && (
+            {/* always available, so the key can be entered or replaced even when the model list failed to load */}
+            {(
               <div className="space-y-1.5 text-[11px] text-amber-800 dark:text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-lg p-2">
                 <div className="flex gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>The server has no OpenRouter key yet, so OpenRouter models cannot run. Paste it here (kept in the server's memory only, until it restarts):</span>
+                  <span>
+                    {keyConfigured === true
+                      ? 'The server has an OpenRouter key. Paste another one to replace it (kept in the server\'s memory only, until it restarts):'
+                      : 'OpenRouter key. Paste it here (kept in the server\'s memory only, until it restarts; or set OPENROUTER_API_KEY in .env):'}
+                  </span>
                 </div>
                 <div className="flex gap-1.5">
                   <input
