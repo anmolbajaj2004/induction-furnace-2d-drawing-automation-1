@@ -1,0 +1,8 @@
+{
+  "name": "Induction Furnace 2D Drawing Automation",
+  "description": "Parametric engineering desktop dashboard for calculating induction furnace scaling parameters and generating 2D AutoCAD DXF modification schemas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
