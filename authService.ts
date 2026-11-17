@@ -51,6 +51,29 @@ setInterval(() => {
 // ---- Mail ----
 const smtpConfigured = () => !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 
+const makeTransport = () => {
+  const port = Number(process.env.SMTP_PORT) || 587;
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    connectionTimeout: 15000,
+  });
+};
+
+// Logs the mail setup at startup so a broken deployment is obvious from the server log.
+function checkMailSetup() {
+  if (!smtpConfigured()) {
+    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). NODE_ENV=${process.env.NODE_ENV || "(unset)"} - ${process.env.NODE_ENV === "production" ? "login emails will FAIL" : "OTP will be printed here"}`);
+    return;
+  }
+  makeTransport().verify().then(
+    () => console.log(`[auth] SMTP OK: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587} as ${process.env.SMTP_USER}, from ${process.env.SMTP_FROM || process.env.SMTP_USER}`),
+    (e: any) => console.error(`[auth] SMTP CHECK FAILED (${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587}): ${e?.code || ""} ${e?.message || e?.errors || e}`),
+  );
+}
+
 async function sendOtpMail(to: string, code: string) {
   if (!smtpConfigured()) {
     if (process.env.NODE_ENV === 'production') throw new Error('Email is not configured on the server.');
@@ -58,13 +81,7 @@ async function sendOtpMail(to: string, code: string) {
     console.warn(`[auth] SMTP not configured - DEV ONLY, OTP for ${to}: ${code}`);
     return;
   }
-  const port = Number(process.env.SMTP_PORT) || 587;
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port,
-    secure: port === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-  });
+  const transporter = makeTransport();
   await transporter.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
@@ -105,6 +122,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 export function registerAuthRoutes(app: Express) {
+  checkMailSetup();
   app.post('/api/auth/request-otp', async (req, res) => {
     const email = normalizeEmail(req.body?.email);
     if (!email) return res.status(400).json({ error: `Only ${ALLOWED_DOMAIN} email addresses can log in.` });
