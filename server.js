@@ -59,7 +59,7 @@ var makeTransport = () => {
 };
 function checkMailSetup() {
   if (!smtpConfigured()) {
-    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). NODE_ENV=${process.env.NODE_ENV || "(unset)"} - ${process.env.NODE_ENV === "production" ? "login emails will FAIL" : "OTP will be printed here"}`);
+    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). login emails will FAIL for remote users (OTP is only printed here for requests from this machine). Create .env or set these variables on the server.`);
     return;
   }
   makeTransport().verify().then(
@@ -67,9 +67,9 @@ function checkMailSetup() {
     (e) => console.error(`[auth] SMTP CHECK FAILED (${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587}): ${e?.code || ""} ${e?.message || e?.errors || e}`)
   );
 }
-async function sendOtpMail(to, code) {
+async function sendOtpMail(to, code, localRequest) {
   if (!smtpConfigured()) {
-    if (process.env.NODE_ENV === "production") throw new Error("Email is not configured on the server.");
+    if (!localRequest) throw new Error("Email is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS missing).");
     console.warn(`[auth] SMTP not configured - DEV ONLY, OTP for ${to}: ${code}`);
     return;
   }
@@ -120,7 +120,9 @@ function registerAuthRoutes(app2) {
     }
     const code = String(crypto.randomInt(0, 1e6)).padStart(6, "0");
     try {
-      await sendOtpMail(email, code);
+      const ra = req.socket.remoteAddress || "";
+      const local = /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers["x-forwarded-for"];
+      await sendOtpMail(email, code, local);
     } catch (err) {
       console.error("[auth] sending OTP mail failed:", err?.message || err);
       return res.status(502).json({ error: "Could not send the email. Please try again or contact the admin." });

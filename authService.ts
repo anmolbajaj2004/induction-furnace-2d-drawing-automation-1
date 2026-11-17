@@ -65,7 +65,7 @@ const makeTransport = () => {
 // Logs the mail setup at startup so a broken deployment is obvious from the server log.
 function checkMailSetup() {
   if (!smtpConfigured()) {
-    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). NODE_ENV=${process.env.NODE_ENV || "(unset)"} - ${process.env.NODE_ENV === "production" ? "login emails will FAIL" : "OTP will be printed here"}`);
+    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). login emails will FAIL for remote users (OTP is only printed here for requests from this machine). Create .env or set these variables on the server.`);
     return;
   }
   makeTransport().verify().then(
@@ -74,10 +74,11 @@ function checkMailSetup() {
   );
 }
 
-async function sendOtpMail(to: string, code: string) {
+async function sendOtpMail(to: string, code: string, localRequest: boolean) {
   if (!smtpConfigured()) {
-    if (process.env.NODE_ENV === 'production') throw new Error('Email is not configured on the server.');
-    // Development only: no SMTP set up, so print the code in the server console instead.
+    // Printing the code is allowed ONLY for requests made from this machine itself (local development).
+    // On a hosted server this must fail loudly instead of pretending the mail was sent.
+    if (!localRequest) throw new Error('Email is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS missing).');
     console.warn(`[auth] SMTP not configured - DEV ONLY, OTP for ${to}: ${code}`);
     return;
   }
@@ -136,7 +137,9 @@ export function registerAuthRoutes(app: Express) {
 
     const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
     try {
-      await sendOtpMail(email, code);
+      const ra = req.socket.remoteAddress || '';
+      const local =/^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers['x-forwarded-for'];
+      await sendOtpMail(email, code, local);
     } catch (err: any) {
       console.error('[auth] sending OTP mail failed:', err?.message || err);
       return res.status(502).json({ error: 'Could not send the email. Please try again or contact the admin.' });
