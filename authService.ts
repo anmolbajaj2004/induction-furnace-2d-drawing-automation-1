@@ -92,7 +92,9 @@ const readSession = (req: Request): string | null => {
 };
 
 const setCookie = (res: Response, value: string, maxAgeMs: number) => {
-  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  // Secure cookies need HTTPS. COOKIE_SECURE=false allows a plain-HTTP deployment (not recommended).
+  const useSecure = process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === 'true' : process.env.NODE_ENV === 'production';
+  const secure = useSecure ? '; Secure' : '';
   res.setHeader('Set-Cookie', `${COOKIE}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(maxAgeMs / 1000)}${secure}`);
 };
 

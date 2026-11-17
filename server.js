@@ -84,7 +84,8 @@ var readSession = (req) => {
   return email;
 };
 var setCookie = (res, value, maxAgeMs) => {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  const useSecure = process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : process.env.NODE_ENV === "production";
+  const secure = useSecure ? "; Secure" : "";
   res.setHeader("Set-Cookie", `${COOKIE}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(maxAgeMs / 1e3)}${secure}`);
 };
 function requireAuth(req, res, next) {
@@ -304,6 +305,10 @@ var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
 var app = express();
 app.use(express.json({ limit: "50mb" }));
+if (process.env.TRUST_PROXY) {
+  const tp = process.env.TRUST_PROXY;
+  app.set("trust proxy", /^\d+$/.test(tp) ? Number(tp) : tp === "true" ? true : tp);
+}
 registerAuthRoutes(app);
 var PORT = 3e3;
 var getGeminiClient = () => {
