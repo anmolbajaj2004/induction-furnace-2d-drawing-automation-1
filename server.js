@@ -46,7 +46,46 @@ setInterval(() => {
     if (!h.some((t) => now - t < 36e5)) ipHits.delete(k);
   });
 }, 5 * 60 * 1e3).unref();
+var graphConfigured = () => !!(process.env.MS_TENANT_ID && process.env.MS_CLIENT_ID && process.env.MS_CLIENT_SECRET && process.env.MS_SENDER);
 var smtpConfigured = () => !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+var mailConfigured = () => graphConfigured() || smtpConfigured();
+var subjectOf = (code) => `Your Vulcan CAD login code: ${code}`;
+var textOf = (code) => `Your one-time login code is ${code}.
+It expires in 10 minutes. If you did not request it, ignore this email.`;
+var htmlOf = (code) => `<p>Your one-time login code is</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>It expires in 10 minutes. If you did not request it, ignore this email.</p>`;
+var graphToken = null;
+async function getGraphToken() {
+  if (graphToken && graphToken.exp > Date.now() + 6e4) return graphToken.value;
+  const r = await fetch(`https://login.microsoftonline.com/${encodeURIComponent(process.env.MS_TENANT_ID)}/oauth2/v2.0/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: process.env.MS_CLIENT_ID,
+      client_secret: process.env.MS_CLIENT_SECRET,
+      scope: "https://graph.microsoft.com/.default",
+      grant_type: "client_credentials"
+    })
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) throw new Error(`Microsoft token request failed: ${j.error_description || j.error || r.status}`);
+  graphToken = { value: j.access_token, exp: Date.now() + (Number(j.expires_in) || 3e3) * 1e3 };
+  return graphToken.value;
+}
+async function sendViaGraph(to, code) {
+  const token = await getGraphToken();
+  const r = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(process.env.MS_SENDER)}/sendMail`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: { subject: subjectOf(code), body: { contentType: "HTML", content: htmlOf(code) }, toRecipients: [{ emailAddress: { address: to } }] },
+      saveToSentItems: false
+    })
+  });
+  if (!r.ok) {
+    const j = await r.json().catch(() => ({}));
+    throw new Error(`Microsoft Graph sendMail failed (${r.status}): ${j?.error?.code || ""} ${j?.error?.message || ""}`);
+  }
+}
 var makeTransport = () => {
   const port = Number(process.env.SMTP_PORT) || 587;
   return nodemailer.createTransport({
@@ -58,8 +97,15 @@ var makeTransport = () => {
   });
 };
 function checkMailSetup() {
+  if (graphConfigured()) {
+    getGraphToken().then(
+      () => console.log(`[auth] Microsoft Graph OK: sending as ${process.env.MS_SENDER}`),
+      (e) => console.error(`[auth] Microsoft Graph CHECK FAILED: ${e?.message || e}`)
+    );
+    return;
+  }
   if (!smtpConfigured()) {
-    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). login emails will FAIL for remote users (OTP is only printed here for requests from this machine). Create .env or set these variables on the server.`);
+    console.warn("[auth] Mail NOT configured (set MS_TENANT_ID/MS_CLIENT_ID/MS_CLIENT_SECRET/MS_SENDER, or SMTP_HOST/SMTP_USER/SMTP_PASS). Login emails will FAIL for remote users (OTP is only printed here for requests from this machine).");
     return;
   }
   makeTransport().verify().then(
@@ -68,19 +114,18 @@ function checkMailSetup() {
   );
 }
 async function sendOtpMail(to, code, localRequest) {
-  if (!smtpConfigured()) {
-    if (!localRequest) throw new Error("Email is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS missing).");
-    console.warn(`[auth] SMTP not configured - DEV ONLY, OTP for ${to}: ${code}`);
+  if (!mailConfigured()) {
+    if (!localRequest) throw new Error("Email is not configured on the server (Microsoft Graph or SMTP settings missing).");
+    console.warn(`[auth] Mail not configured - DEV ONLY, OTP for ${to}: ${code}`);
     return;
   }
-  const transporter = makeTransport();
-  await transporter.sendMail({
+  if (graphConfigured()) return sendViaGraph(to, code);
+  await makeTransport().sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
-    subject: `Your Vulcan CAD login code: ${code}`,
-    text: `Your one-time login code is ${code}.
-It expires in 10 minutes. If you did not request it, ignore this email.`,
-    html: `<p>Your one-time login code is</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>It expires in 10 minutes. If you did not request it, ignore this email.</p>`
+    subject: subjectOf(code),
+    text: textOf(code),
+    html: htmlOf(code)
   });
 }
 var makeSession = (email) => {
@@ -119,13 +164,15 @@ function registerAuthRoutes(app2) {
       return res.status(429).json({ error: `Wait ${wait}s before requesting another code.` });
     }
     const code = String(crypto.randomInt(0, 1e6)).padStart(6, "0");
+    const ra = req.socket.remoteAddress || "";
+    const local = /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers["x-forwarded-for"];
     try {
-      const ra = req.socket.remoteAddress || "";
-      const local = /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers["x-forwarded-for"];
       await sendOtpMail(email, code, local);
     } catch (err) {
       console.error("[auth] sending OTP mail failed:", err?.message || err);
-      return res.status(502).json({ error: "Could not send the email. Please try again or contact the admin." });
+      if (local) {
+        console.warn(`[auth] DEV ONLY, OTP for ${email}: ${code}`);
+      } else return res.status(502).json({ error: "Could not send the email. Please try again or contact the admin." });
     }
     pending.set(email, { hash: hmac(`${email}:${code}`), expires: Date.now() + OTP_TTL_MS, attempts: 0, sentAt: Date.now() });
     return res.json({ ok: true });
@@ -324,7 +371,7 @@ var app = express();
 app.use(express.json({ limit: "50mb" }));
 if (process.env.TRUST_PROXY) {
   const tp = process.env.TRUST_PROXY;
-  app.set("trust proxy", /^\d+$/.test(tp) ? Number(tp) : tp === "true" ? true : tp);
+  app.set("trust proxy", /^d+$/.test(tp) ? Number(tp) : tp === "true" ? true : tp);
 }
 registerAuthRoutes(app);
 var PORT = 3e3;

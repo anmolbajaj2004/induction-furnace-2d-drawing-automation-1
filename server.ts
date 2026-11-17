@@ -20,7 +20,7 @@ app.use(express.json({ limit: '50mb' }));
 // otherwise the login rate limits would treat every user as the same address.
 if (process.env.TRUST_PROXY) {
   const tp = process.env.TRUST_PROXY;
-  app.set('trust proxy', /^\d+$/.test(tp) ? Number(tp) : tp === 'true' ? true : tp);
+  app.set('trust proxy', /^d+$/.test(tp) ? Number(tp) : tp === 'true' ? true : tp);
 }
 
 // Login (email OTP, @kognitoai.com only). Must come before the other /api routes: it also guards them.

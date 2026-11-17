@@ -49,8 +49,55 @@ setInterval(() => {
 }, 5 * 60 * 1000).unref();
 
 // ---- Mail ----
+// Two ways to send, chosen by which settings exist (Microsoft Graph wins if both are set):
+//  1) Microsoft Graph (Microsoft 365, no SMTP AUTH needed): MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, MS_SENDER
+//  2) Plain SMTP: SMTP_HOST, SMTP_USER, SMTP_PASS (+ SMTP_PORT, SMTP_FROM)
+const graphConfigured = () => !!(process.env.MS_TENANT_ID && process.env.MS_CLIENT_ID && process.env.MS_CLIENT_SECRET && process.env.MS_SENDER);
 const smtpConfigured = () => !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const mailConfigured = () => graphConfigured() || smtpConfigured();
 
+const subjectOf = (code: string) => `Your Vulcan CAD login code: ${code}`;
+const textOf = (code: string) => `Your one-time login code is ${code}.
+It expires in 10 minutes. If you did not request it, ignore this email.`;
+const htmlOf = (code: string) => `<p>Your one-time login code is</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>It expires in 10 minutes. If you did not request it, ignore this email.</p>`;
+
+// ---- Microsoft Graph (client-credentials flow) ----
+let graphToken: { value: string; exp: number } | null = null;
+async function getGraphToken(): Promise<string> {
+  if (graphToken && graphToken.exp > Date.now() + 60_000) return graphToken.value;
+  const r = await fetch(`https://login.microsoftonline.com/${encodeURIComponent(process.env.MS_TENANT_ID!)}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: process.env.MS_CLIENT_ID!,
+      client_secret: process.env.MS_CLIENT_SECRET!,
+      scope: 'https://graph.microsoft.com/.default',
+      grant_type: 'client_credentials',
+    }),
+  });
+  const j: any = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) throw new Error(`Microsoft token request failed: ${j.error_description || j.error || r.status}`);
+  graphToken = { value: j.access_token, exp: Date.now() + (Number(j.expires_in) || 3000) * 1000 };
+  return graphToken.value;
+}
+
+async function sendViaGraph(to: string, code: string) {
+  const token = await getGraphToken();
+  const r = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(process.env.MS_SENDER!)}/sendMail`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: { subject: subjectOf(code), body: { contentType: 'HTML', content: htmlOf(code) }, toRecipients: [{ emailAddress: { address: to } }] },
+      saveToSentItems: false,
+    }),
+  });
+  if (!r.ok) {
+    const j: any = await r.json().catch(() => ({}));
+    throw new Error(`Microsoft Graph sendMail failed (${r.status}): ${j?.error?.code || ''} ${j?.error?.message || ''}`);
+  }
+}
+
+// ---- SMTP ----
 const makeTransport = () => {
   const port = Number(process.env.SMTP_PORT) || 587;
   return nodemailer.createTransport({
@@ -64,31 +111,38 @@ const makeTransport = () => {
 
 // Logs the mail setup at startup so a broken deployment is obvious from the server log.
 function checkMailSetup() {
+  if (graphConfigured()) {
+    getGraphToken().then(
+      () => console.log(`[auth] Microsoft Graph OK: sending as ${process.env.MS_SENDER}`),
+      (e: any) => console.error(`[auth] Microsoft Graph CHECK FAILED: ${e?.message || e}`),
+    );
+    return;
+  }
   if (!smtpConfigured()) {
-    console.warn(`[auth] SMTP NOT configured (need SMTP_HOST, SMTP_USER, SMTP_PASS). login emails will FAIL for remote users (OTP is only printed here for requests from this machine). Create .env or set these variables on the server.`);
+    console.warn('[auth] Mail NOT configured (set MS_TENANT_ID/MS_CLIENT_ID/MS_CLIENT_SECRET/MS_SENDER, or SMTP_HOST/SMTP_USER/SMTP_PASS). Login emails will FAIL for remote users (OTP is only printed here for requests from this machine).');
     return;
   }
   makeTransport().verify().then(
     () => console.log(`[auth] SMTP OK: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587} as ${process.env.SMTP_USER}, from ${process.env.SMTP_FROM || process.env.SMTP_USER}`),
-    (e: any) => console.error(`[auth] SMTP CHECK FAILED (${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587}): ${e?.code || ""} ${e?.message || e?.errors || e}`),
+    (e: any) => console.error(`[auth] SMTP CHECK FAILED (${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587}): ${e?.code || ''} ${e?.message || e?.errors || e}`),
   );
 }
 
 async function sendOtpMail(to: string, code: string, localRequest: boolean) {
-  if (!smtpConfigured()) {
+  if (!mailConfigured()) {
     // Printing the code is allowed ONLY for requests made from this machine itself (local development).
     // On a hosted server this must fail loudly instead of pretending the mail was sent.
-    if (!localRequest) throw new Error('Email is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS missing).');
-    console.warn(`[auth] SMTP not configured - DEV ONLY, OTP for ${to}: ${code}`);
+    if (!localRequest) throw new Error('Email is not configured on the server (Microsoft Graph or SMTP settings missing).');
+    console.warn(`[auth] Mail not configured - DEV ONLY, OTP for ${to}: ${code}`);
     return;
   }
-  const transporter = makeTransport();
-  await transporter.sendMail({
+  if (graphConfigured()) return sendViaGraph(to, code);
+  await makeTransport().sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
-    subject: `Your Vulcan CAD login code: ${code}`,
-    text: `Your one-time login code is ${code}.\nIt expires in 10 minutes. If you did not request it, ignore this email.`,
-    html: `<p>Your one-time login code is</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>It expires in 10 minutes. If you did not request it, ignore this email.</p>`,
+    subject: subjectOf(code),
+    text: textOf(code),
+    html: htmlOf(code),
   });
 }
 
@@ -136,13 +190,16 @@ export function registerAuthRoutes(app: Express) {
     }
 
     const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+    const ra = req.socket.remoteAddress || '';
+    const local = /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers['x-forwarded-for'];
     try {
-      const ra = req.socket.remoteAddress || '';
-      const local =/^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ra) && !req.headers['x-forwarded-for'];
       await sendOtpMail(email, code, local);
     } catch (err: any) {
       console.error('[auth] sending OTP mail failed:', err?.message || err);
-      return res.status(502).json({ error: 'Could not send the email. Please try again or contact the admin.' });
+      if (local) {
+        // Local development only (request from this machine): do not block login when mail is unreachable.
+        console.warn(`[auth] DEV ONLY, OTP for ${email}: ${code}`);
+      } else return res.status(502).json({ error: 'Could not send the email. Please try again or contact the admin.' });
     }
     pending.set(email, { hash: hmac(`${email}:${code}`), expires: Date.now() + OTP_TTL_MS, attempts: 0, sentAt: Date.now() });
     return res.json({ ok: true });
