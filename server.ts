@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { registerAuthRoutes } from './authService';
 import { extractAllViews, parseJsonLoose, toList, CallFn, ViewImage } from './extractionPipeline';
 
 dotenv.config();
@@ -14,6 +15,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
+
+// Login (email OTP, @kognitoai.com only). Must come before the other /api routes: it also guards them.
+registerAuthRoutes(app);
 
 const PORT = 3000;
 

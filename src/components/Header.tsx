@@ -1,7 +1,8 @@
 import React from 'react';
-import { Sun, Moon, Download, Layers, Sparkles, Sliders, RefreshCw } from 'lucide-react';
+import { Sun, Moon, Download, Layers, Sparkles, Sliders, RefreshCw, LogOut } from 'lucide-react';
 import { PresetModel } from '../types/furnace';
 import { ModelPicker } from './ModelPicker';
+import { useAuth } from './AuthGate';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -24,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onChangeTab,
 }) => {
+  const auth = useAuth();
   return (
     <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-[1600px] mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-6">
@@ -123,6 +125,16 @@ export const Header: React.FC<HeaderProps> = ({
             <Download className="w-3.5 h-3.5" />
             <span>Export CAD Suite</span>
           </button>
+
+          {auth && (
+            <button
+              onClick={auth.logout}
+              className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+              title={`Log out (${auth.email})`}
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
       </div>
