@@ -3,6 +3,7 @@ import { DwgCropBox, ExtractedDwgDimension, UploadedDwgFile, OrthographicViewTyp
 import { SHELL_DRAWING_IMAGE_URL } from '../utils/dwgParser';
 import { ShellResult } from '../utils/shellModel';
 import { ShellViewDrawing } from './ShellViewDrawing';
+import { ShellIsoDrawing } from './ShellIsoDrawing';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Compass, MapPin, Info, Layers, ZoomIn, ZoomOut, Tag, Maximize2, Minimize2, Download } from 'lucide-react';
 
@@ -58,6 +59,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
   onHoverKey: onHoverGiven,
 }) => {
   const [activeTab, setActiveTab] = useState<OrthographicViewType>('FRONT');
+  const [iso, setIso] = useState(false); // isometric view of the generated shell model (not one of the three pasted views)
   const [set, setSet] = useState<'given' | 'reference'>('given');
   const [refHoverKey, setRefHoverKey] = useState<string | null>(null);
   const hasReference = !!(referenceSet && (referenceSet.frontViewImageUrl || referenceSet.topViewImageUrl || referenceSet.sideViewImageUrl));
@@ -105,6 +107,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
   const currentImage = currentView === 'TOP' ? topImage : currentView === 'SIDE' ? sideImage : frontImage;
 
   const isShell = !refMode && uploadedFile.componentType === 'SHELL_MECHANICAL' && !!shell;
+  const isoOn = iso && isShell;
   // Pasted image vs. the generated model drawing (which carries every dimension of the view).
   type Source = 'image' | 'overlay' | 'model';
   const [sourceChoice, setSourceChoice] = useState<Partial<Record<OrthographicViewType, Source>>>({});
@@ -214,9 +217,21 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
   // ---- SVG export (generated drawings: marked + numbered) ----
   const exportGeom = shell ? (genMode === 'required' ? shell.req : shell.ref) : null;
   const exportCmp = shell && genMode === 'required' ? shell.ref : undefined;
-  const markupFor = (v: OrthographicViewType) =>
+  type GenView = OrthographicViewType | 'ISO';
+  const markupFor = (v: GenView) =>
     renderToStaticMarkup(
-      <ShellViewDrawing view={v} g={exportGeom!} cmp={exportCmp} numberById={numberById} hoveredId={null} onHover={() => {}} />
+      v === 'ISO' ? (
+        <ShellIsoDrawing
+          compact
+          req={shell!.req}
+          ref0={shell!.ref}
+          mode={genMode === 'required' ? 'required' : 'reference'}
+          refCapacity={shell!.refCapacity}
+          targetCapacity={shell!.targetCapacity}
+        />
+      ) : (
+        <ShellViewDrawing view={v} g={exportGeom!} cmp={exportCmp} numberById={numberById} hoveredId={null} onHover={() => {}} />
+      )
     );
   const viewBoxOf = (markup: string): [number, number, number, number] => {
     const mm = markup.match(/viewBox="([^"]+)"/);
@@ -233,7 +248,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
     URL.revokeObjectURL(url);
   };
   const capLabel = shell ? (genMode === 'required' ? `${shell.targetCapacity}T` : `${shell.refCapacity}T`) : '';
-  const downloadView = (v: OrthographicViewType) => {
+  const downloadView = (v: GenView) => {
     if (!shell || !exportGeom) return;
     const markup = markupFor(v);
     const [x, y, w, h] = viewBoxOf(markup);
@@ -248,7 +263,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
     const pad = 100;
     let yy = 0;
     let body = '';
-    (['FRONT', 'TOP', 'SIDE'] as OrthographicViewType[]).forEach((v) => {
+    (['FRONT', 'TOP', 'SIDE', 'ISO'] as GenView[]).forEach((v) => {
       const markup = markupFor(v);
       const [, , w, h] = viewBoxOf(markup);
       const cellH = Math.round((cellW * h) / w);
@@ -312,7 +327,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
             <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px] font-mono">
               {(
                 [
-                  ['given', 'Given'],
+                  ['given', 'Base'],
                   ['reference', `Ref${referenceSet!.capacityT ? ` ${referenceSet!.capacityT} t` : ''}`],
                 ] as ['given' | 'reference', string][]
               ).map(([k, label]) => (
@@ -322,7 +337,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
                     setSet(k);
                     setRefHoverKey(null);
                   }}
-                  title={k === 'given' ? 'Your given drawing with its marked dimensions' : 'The reference drawing with its marked dimensions'}
+                  title={k === 'given' ? 'Your base drawing with its marked dimensions' : 'The reference drawing with its marked dimensions'}
                   className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
                     set === k ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'
                   }`}
@@ -336,14 +351,28 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
             {(['FRONT', 'TOP', 'SIDE'] as OrthographicViewType[]).map((v) => (
               <button
                 key={v}
-                onClick={() => setActiveTab(v)}
+                onClick={() => {
+                  setIso(false);
+                  setActiveTab(v);
+                }}
                 className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
-                  currentView === v ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'
+                  currentView === v && !isoOn ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 {v}
               </button>
             ))}
+            {isShell && (
+              <button
+                onClick={() => setIso(true)}
+                title="Isometric view of the generated shell (built from the dimension register)"
+                className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                  isoOn ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                ISO
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -355,7 +384,36 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
           expanded ? 'h-[calc(100vh-290px)]' : 'h-[420px]'
         }`}
       >
-        {generated && shell ? (
+        {isoOn && shell ? (
+          <>
+            <ShellIsoDrawing
+              compact
+              req={shell.req}
+              ref0={shell.ref}
+              mode={genMode === 'required' ? 'required' : 'reference'}
+              refCapacity={shell.refCapacity}
+              targetCapacity={shell.targetCapacity}
+              hoveredId={hoveredShellId}
+              onHover={onHoverShellId}
+              numberById={markAll ? numberById : {}}
+              names={Object.fromEntries(shell.dims.map((d) => [d.id, d.label]))}
+            />
+            <div className="absolute top-2 left-2 bg-slate-950/90 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded text-[10px] font-mono font-bold shadow-md">
+              ISOMETRIC · model
+            </div>
+            <div className="absolute top-2 right-2 flex gap-1 bg-slate-950/90 p-0.5 rounded-md border border-slate-700 text-[10px] font-mono">
+              {(['given', 'required'] as const).map((md) => (
+                <button
+                  key={md}
+                  onClick={() => setGenMode(md)}
+                  className={`px-1.5 py-0.5 rounded cursor-pointer ${genMode === md ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300'}`}
+                >
+                  {md === 'given' ? `${shell.refCapacity} t base` : `${shell.targetCapacity} t target`}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : generated && shell ? (
           <>
             <ShellViewDrawing
               view={currentView}
@@ -377,7 +435,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
                     onClick={() => setGenMode(md)}
                     className={`px-1.5 py-0.5 rounded cursor-pointer ${genMode === md ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300'}`}
                   >
-                    {md === 'given' ? `${shell.refCapacity} t given` : `${shell.targetCapacity} t required`}
+                    {md === 'given' ? `${shell.refCapacity} t base` : `${shell.targetCapacity} t target`}
                   </button>
                 ))}
               </div>
@@ -579,7 +637,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
       {isShell && (
         <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
           <span className="text-slate-400">SVG ({genMode === 'required' ? `${shell!.targetCapacity} t` : `${shell!.refCapacity} t`}):</span>
-          {(['FRONT', 'TOP', 'SIDE'] as OrthographicViewType[]).map((v) => (
+          {(['FRONT', 'TOP', 'SIDE', 'ISO'] as GenView[]).map((v) => (
             <button
               key={v}
               onClick={() => downloadView(v)}
@@ -594,7 +652,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
             className="px-2 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 cursor-pointer flex items-center gap-1"
           >
             <Download className="w-3 h-3" />
-            All 3 views
+            All 4 views
           </button>
           <div className="ml-auto flex gap-1 bg-slate-950 p-0.5 rounded-md border border-slate-700">
             {(['given', 'required'] as const).map((md) => (
@@ -603,7 +661,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
                 onClick={() => setGenMode(md)}
                 className={`px-1.5 py-0.5 rounded cursor-pointer ${genMode === md ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-300'}`}
               >
-                {md === 'given' ? 'given' : 'required'}
+                {md === 'given' ? 'base' : 'target'}
               </button>
             ))}
           </div>
@@ -634,7 +692,7 @@ export const RealDrawingVisualizer: React.FC<RealDrawingVisualizerProps> = ({
         ) : (
           <div className="text-center py-1 text-slate-400 text-[11px] flex items-center justify-center gap-1.5">
             <Info className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Every dimension is numbered on the drawing and in the table. Hover either one to light up the other; switch FRONT / TOP / SIDE to see each view.</span>
+            <span>Every dimension is numbered on the drawing and in the table. Hover either one to light up the other; switch FRONT / TOP / SIDE / ISO to see each view.</span>
           </div>
         )}
       </div>

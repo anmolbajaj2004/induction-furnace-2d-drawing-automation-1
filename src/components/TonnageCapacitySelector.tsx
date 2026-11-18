@@ -35,11 +35,11 @@ export const TonnageCapacitySelector: React.FC<TonnageCapacitySelectorProps> = (
         <div className="flex items-center gap-2">
           <Gauge className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <h3 className="text-xs font-bold text-emerald-900 dark:text-emerald-200 uppercase tracking-wide">
-            Select Required Tonnage &amp; Capacity
+            Select Target Tonnage &amp; Capacity
           </h3>
         </div>
         <span className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300">
-          Drawing given: {inputs.baselineCapacity} t / {inputs.baselinePower} MW &nbsp;→&nbsp; Required:{' '}
+          Base drawing: {inputs.baselineCapacity} t / {inputs.baselinePower} MW &nbsp;→&nbsp; Target:{' '}
           <span className="text-emerald-600 dark:text-emerald-400">
             {inputs.targetCapacity} t / {inputs.targetPower} MW
           </span>
@@ -63,7 +63,7 @@ export const TonnageCapacitySelector: React.FC<TonnageCapacitySelectorProps> = (
                     ? 'bg-emerald-500 text-slate-950 border-emerald-500 shadow-sm'
                     : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-500'
                 }`}
-                title={isRef ? 'Tonnage of the drawing as given' : undefined}
+                title={isRef ? 'Tonnage of the Base drawing' : undefined}
               >
                 {t} t{isRef ? ' ●' : ''}
               </button>
@@ -77,7 +77,7 @@ export const TonnageCapacitySelector: React.FC<TonnageCapacitySelectorProps> = (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="space-y-1">
           <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between">
-            <span>Required capacity (custom)</span>
+            <span>Target capacity (custom)</span>
             <span className="font-mono text-[11px] text-slate-500">Tons</span>
           </label>
           <input
@@ -93,7 +93,7 @@ export const TonnageCapacitySelector: React.FC<TonnageCapacitySelectorProps> = (
 
         <div className="space-y-1">
           <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between">
-            <span>Required power</span>
+            <span>Target power</span>
             <span className="font-mono text-[11px] text-slate-500">MW</span>
           </label>
           <input

@@ -336,7 +336,7 @@ export const ShellDrawing: React.FC<ShellDrawingProps> = ({ req, ref0, mode, ref
         <div className="flex items-center gap-3 text-[11px] font-mono text-slate-600 dark:text-slate-300">
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-6 border-t-2 border-slate-800 dark:border-slate-200" />
-            {mode === 'reference' ? `Reference ${refCapacity} t (as given)` : `Required ${targetCapacity} t`}
+            {mode === 'reference' ? `Reference ${refCapacity} t (base)` : `Target ${targetCapacity} t`}
           </span>
           {showGhost && (
             <span className="flex items-center gap-1.5">

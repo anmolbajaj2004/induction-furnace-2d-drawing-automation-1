@@ -9,6 +9,20 @@ import { EXTRACTED_KEY_TO_SHELL_ID, VIEWS_BY_ID, sampleCropBox } from '../utils/
 import { SHELL_DRAWING_IMAGE_URL } from '../utils/dwgParser';
 import { Scale, Activity, ArrowRight, ArrowLeft, Layers, MapPin, Eye, Plus, Trash2, Download } from 'lucide-react';
 import { buildDocx, buildXlsx, buildJson, saveBlob, ExportRow, ExportMeta } from '../utils/exportFormats';
+import {
+  evaluateTemplate,
+  findTemplateRow,
+  templateRequired,
+  anchorWarning,
+  endBayLayout,
+  TemplateResult,
+  TEMPLATE_STEPS,
+  TEMPLATE_ID,
+  TEMPLATE_VERSION,
+  TEMPLATE_ROW_COUNT,
+  T_MIN,
+  T_MAX,
+} from '../utils/shellTemplate';
 
 interface ReferenceSpecsStepProps {
   referenceSet: ReferenceSet;
@@ -33,14 +47,14 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
   onNextStep,
   onPrevStep,
 }) => {
-  // Required value for an extracted callout: the model's scaled value for that dimension
+  // Target value for an extracted callout: the model's scaled value for that dimension
   // (if the user edited the extracted value, the same scale factor is applied to the edited number).
   const shellDimFor = (dim: ExtractedDwgDimension) => {
     if (dim.key.startsWith('shell_')) return shell.dims.find((d) => d.id === dim.key.slice(6));
     const id = EXTRACTED_KEY_TO_SHELL_ID[dim.key];
     return (id && shell.dims.find((d) => d.id === id)) || shell.byExtractedKey[dim.key];
   };
-  // ---- Reference image set: when its dimensions were read, Required is converted ONLY from the pasted drawings ----
+  // ---- Reference image set: when its dimensions were read, Target is converted ONLY from the pasted drawings ----
   const imageMode = referenceSet.extractedDimensions.length > 0;
   const [axis, setAxis] = useState<Axis>('capacity');
   const [curve, setCurve] = useState<Curve>('power');
@@ -71,10 +85,24 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
     return convertThroughImages(dim.valueMm, r.valueMm, convertParams);
   };
 
-  // 'model' = taken from the parametric shell model, 'rule' = general scaling rule (see scaleGenericDimension),
-  // 'images' = converted from the given and reference drawings only
-  const basisFor = (dim: ExtractedDwgDimension): 'model' | 'rule' | 'images' | null =>
-    imageMode
+  // ---- Shell template FCE-SHEL: the engineer's formulas are the logic for Target when no reference images are used ----
+  const templateMode = !imageMode && uploadedFile.componentType === 'SHELL_MECHANICAL';
+  const tv = useMemo(() => evaluateTemplate(inputs.targetCapacity), [inputs.targetCapacity]);
+  const tplFor = (dim: ExtractedDwgDimension): TemplateResult | null => {
+    if (!templateMode || !tv) return null;
+    const shellId = EXTRACTED_KEY_TO_SHELL_ID[dim.key] ?? shell.byExtractedKey[dim.key]?.id;
+    const row = findTemplateRow(dim.key, dim.label, shellId);
+    return row ? templateRequired(row, dim.valueMm, tv) : null;
+  };
+
+  // 'template' = engineer's shell template, 'model' = taken from the parametric shell model,
+  // 'rule' = general scaling rule (see scaleGenericDimension), 'images' = converted from the base and reference drawings only
+  const basisFor = (dim: ExtractedDwgDimension): 'template' | 'model' | 'rule' | 'images' | null =>
+    templateMode
+      ? tplFor(dim)?.value != null
+        ? 'template'
+        : null
+      : imageMode
       ? convertedFor(dim)?.value != null
         ? 'images'
         : null
@@ -84,6 +112,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
       ? 'rule'
       : null;
   const requiredFor = (dim: ExtractedDwgDimension): number | null => {
+    if (templateMode) return tplFor(dim)?.value ?? null;
     if (imageMode) return convertedFor(dim)?.value ?? null;
     const m = shellDimFor(dim);
     if (!m) {
@@ -112,7 +141,8 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
 
   const registerDims = useMemo(() => {
     // With a reference image set the table lists only what was read from the drawings (the built-in model rows are not images)
-    if (uploadedFile.componentType !== 'SHELL_MECHANICAL' || imageMode) return [];
+    // (same with the shell template: rows that were not read from the user's drawing are not listed, no value is made up)
+    if (uploadedFile.componentType !== 'SHELL_MECHANICAL' || imageMode || templateMode) return [];
     const covered = new Set<string>();
     uploadedFile.extractedDimensions.forEach((d) => {
       const id = d.key.startsWith('shell_')
@@ -140,7 +170,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
         return { dim, group: grp };
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadedFile.extractedDimensions, uploadedFile.componentType, shell, onReferenceDrawing, imageMode]);
+  }, [uploadedFile.extractedDimensions, uploadedFile.componentType, shell, onReferenceDrawing, imageMode, templateMode]);
 
   const isChanged = (dim: ExtractedDwgDimension) => {
     const req = requiredFor(dim);
@@ -209,9 +239,13 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
         unit: r.dim.unit,
         source: registerDims.some((x) => x.dim.key === r.dim.key)
           ? 'shell model (not read from drawing)'
+          : templateMode
+          ? tplFor(r.dim)
+            ? `read from drawing; required by template ${TEMPLATE_ID} v${TEMPLATE_VERSION}: ${tplFor(r.dim)!.note}`
+            : `read from drawing; not in template ${TEMPLATE_ID}, so no required value`
           : imageMode
           ? req !== null
-            ? 'read from drawing; required converted from the given and reference images only'
+            ? 'read from drawing; required converted from the base and reference images only'
             : 'read from drawing; no matching reference dimension or conversion not possible, so no required value'
           : basisFor(r.dim) === 'rule'
           ? 'read from drawing; required by general rule'
@@ -223,7 +257,11 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
       referenceModel: imageMode ? referenceSet.extractionModel || 'not recorded' : undefined,
       referenceTons: imageMode ? referenceSet.capacityT : undefined,
       referencePower: imageMode ? referenceSet.powerMW : undefined,
-      conversion: imageMode ? `${curve === 'power' ? 'power-law' : 'linear'} through given and reference images, axis: ${axis}` : 'built-in shell model',
+      conversion: templateMode
+        ? `template ${TEMPLATE_ID} v${TEMPLATE_VERSION} (linear between ${T_MIN} t and ${T_MAX} t drawings; constants copied from the Base drawing)`
+        : imageMode
+        ? `${curve === 'power' ? 'power-law' : 'linear'} through base and reference images, axis: ${axis}`
+        : 'built-in shell model',
       givenTons: inputs.baselineCapacity,
       requiredTons: inputs.targetCapacity,
       file: uploadedFile.filename,
@@ -301,7 +339,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
             Extracted CAD Dimensions, Tonnage Selector &amp; Dimension Changes
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Pick the tonnage you need — the shell dimensions are recalculated, compared with the drawing you gave, and the shell is redrawn below.
+            Pick the tonnage you need — the shell dimensions are recalculated, compared with your Base drawing, and the shell is redrawn below.
           </p>
         </div>
 
@@ -384,7 +422,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
         </div>
       </div>
 
-      {/* Tonnage & capacity selector (drives the Required column + redrawn shell below) */}
+      {/* Tonnage & capacity selector (drives the Target column + redrawn shell below) */}
       <TonnageCapacitySelector
         inputs={inputs}
         shell={shell}
@@ -459,11 +497,11 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
             </div>
           )}
 
-          {/* How Required is produced: from the pasted drawings only (reference set present) or from the built-in model */}
+          {/* How Target is produced: from the pasted drawings only (reference set present) or from the built-in model */}
           {imageMode ? (
             <div className="p-3 rounded-xl border border-blue-500/30 bg-blue-500/10 text-xs space-y-2 text-blue-900 dark:text-blue-100">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="font-bold">Required is converted only from your drawings:</span>
+                <span className="font-bold">Target is converted only from your drawings:</span>
                 <label className="flex items-center gap-1">
                   by
                   <select
@@ -488,7 +526,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                 </label>
               </div>
               <div className="font-mono text-[11px]">
-                Given {inputs.baselineCapacity} t / {inputs.baselinePower} MW → Reference {referenceSet.capacityT ?? '?'} t / {referenceSet.powerMW ?? '?'} MW → Required{' '}
+                Base {inputs.baselineCapacity} t / {inputs.baselinePower} MW → Reference {referenceSet.capacityT ?? '?'} t / {referenceSet.powerMW ?? '?'} MW → Target{' '}
                 {inputs.targetCapacity} t / {inputs.targetPower} MW
               </div>
               {conversionBlocker(convertParams) && <div className="text-rose-700 dark:text-rose-300 font-semibold">{conversionBlocker(convertParams)}</div>}
@@ -496,9 +534,35 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                 A dimension is converted only when the same dimension was read on the reference images (the Reference column). Otherwise it shows — and no value is made up.
               </div>
             </div>
+          ) : templateMode ? (
+            <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs space-y-2 text-emerald-900 dark:text-emerald-100">
+              <div className="font-bold">
+                Target is calculated with shell template {TEMPLATE_ID} v{TEMPLATE_VERSION}
+              </div>
+              <div className="font-mono text-[11px]">
+                Base {inputs.baselineCapacity} t → Target {inputs.targetCapacity} t · {TEMPLATE_ROW_COUNT} template dimensions · t_side 16 mm
+              </div>
+              <div className="text-[11px] text-emerald-800/80 dark:text-emerald-200/80">
+                Plan dimensions: X = X1 + (X2 − X1) × (T − {T_MIN}) / ({T_MAX} − {T_MIN}), from the {T_MIN} t and {T_MAX} t drawings. Heights, plates, spout and hearth seat are constants copied from the Base
+                drawing. A dimension that is not in the template shows — and no value is made up.
+              </div>
+              {tv?.extrapolated && (
+                <div className="text-amber-700 dark:text-amber-300 font-semibold">
+                  {inputs.targetCapacity} t is outside {T_MIN}–{T_MAX} t: formula results are EXTRAPOLATED, designer check required.
+                </div>
+              )}
+              {anchorWarning(inputs.baselineCapacity) && (
+                <div className="text-amber-700 dark:text-amber-300">{anchorWarning(inputs.baselineCapacity)}</div>
+              )}
+              {uploadedFile.extractedDimensions.some((d) => !tplFor(d)) && (
+                <div className="text-slate-600 dark:text-slate-300">
+                  {uploadedFile.extractedDimensions.filter((d) => !tplFor(d)).length} extracted dimension(s) are not in the template and have no required value.
+                </div>
+              )}
+            </div>
           ) : (
             <div className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
-              Required currently comes from the built-in parametric shell model. Add a reference image set in Step 1 to convert from your own drawings only.
+              Target currently comes from the built-in parametric shell model. Add a reference image set in Step 1 to convert from your own drawings only.
             </div>
           )}
 
@@ -512,11 +576,11 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                     CAD Dimension Label <span className="text-[9px] text-amber-500 font-normal">(Hover to locate)</span>
                   </th>
                   <th className="px-3 py-3 font-semibold">Layer</th>
-                  <th className="px-3 py-3 font-semibold text-right">Given ({inputs.baselineCapacity} t)</th>
+                  <th className="px-3 py-3 font-semibold text-right">Base ({inputs.baselineCapacity} t)</th>
                   <th className="px-3 py-3 font-semibold text-right text-blue-600 dark:text-blue-400">
                     Reference ({referenceSet.capacityT ?? '?'} t)
                   </th>
-                  <th className="px-3 py-3 font-semibold text-right text-amber-600 dark:text-amber-400">Required ({inputs.targetCapacity} t)</th>
+                  <th className="px-3 py-3 font-semibold text-right text-amber-600 dark:text-amber-400">Target ({inputs.targetCapacity} t)</th>
                   <th className="px-3 py-3 font-semibold text-right">Change</th>
                   <th className="px-2 py-3 text-center">Action</th>
                 </tr>
@@ -607,7 +671,7 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                         <span className="text-[10px] text-slate-400 ml-1">{dim.unit}</span>
                       </td>
 
-                      {/* REFERENCE IMAGE VALUE: the matching dimension read from the reference drawings (between Given and Required) */}
+                      {/* REFERENCE IMAGE VALUE: the matching dimension read from the reference drawings (between Base and Target) */}
                       <td className="px-3 py-3 text-right">
                         {(() => {
                           if (!imageMode) return <span className="text-slate-400">—</span>;
@@ -653,6 +717,24 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                       {(() => {
                         const req = requiredFor(dim);
                         if (req === null) {
+                          const tr = tplFor(dim);
+                          if (tr?.text) {
+                            return (
+                              <>
+                                <td className="px-3 py-3 text-right font-bold text-amber-700 dark:text-amber-300" title={tr.note}>
+                                  {tr.text}
+                                  {tr.text !== 'no rule' && <span className="text-[10px] font-normal text-slate-400"> {dim.unit}</span>}
+                                  <span className="ml-1 text-[9px] font-sans font-semibold text-slate-500 border border-slate-300 dark:border-slate-600 rounded px-1 align-middle">
+                                    layout
+                                  </span>
+                                  {tr.extrapolated && (
+                                    <span className="ml-1 text-[9px] font-sans font-semibold text-amber-600 border border-amber-500/50 rounded px-1 align-middle">extrapolated</span>
+                                  )}
+                                </td>
+                                <td className="px-3 py-3 text-right text-slate-400">—</td>
+                              </>
+                            );
+                          }
                           return (
                             <>
                               <td className="px-3 py-3 text-right text-slate-400">—</td>
@@ -672,6 +754,22 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
                                   title={convertedFor(dim)?.note}
                                 >
                                   extrapolated
+                                </span>
+                              )}
+                              {basisFor(dim) === 'template' && tplFor(dim)?.extrapolated && (
+                                <span
+                                  className="ml-1 text-[9px] font-sans font-semibold text-amber-600 border border-amber-500/50 rounded px-1 align-middle"
+                                  title={tplFor(dim)?.note}
+                                >
+                                  extrapolated
+                                </span>
+                              )}
+                              {basisFor(dim) === 'template' && !tplFor(dim)?.extrapolated && tplFor(dim)?.status === 'FORMULA' && (
+                                <span
+                                  className="ml-1 text-[9px] font-sans font-semibold text-emerald-600 border border-emerald-500/40 rounded px-1 align-middle"
+                                  title={tplFor(dim)?.note}
+                                >
+                                  formula
                                 </span>
                               )}
                               {basisFor(dim) === 'rule' && (
@@ -754,6 +852,42 @@ export const ReferenceSpecsStep: React.FC<ReferenceSpecsStepProps> = ({
               {totalRows} rows · model: {uploadedFile.extractionModel || 'not recorded (sample / earlier run)'}
             </span>
           </div>
+
+          {/* Every template step evaluated at the required tonnage (includes values that are not dimension rows) */}
+          {templateMode && tv && (
+            <details className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-3">
+              <summary className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 cursor-pointer">
+                Template outputs at {inputs.targetCapacity} t ({TEMPLATE_STEPS.length} steps)
+                {tv.extrapolated && <span className="ml-2 text-amber-600 normal-case font-semibold">extrapolated</span>}
+              </summary>
+              <table className="w-full text-xs font-mono mt-2">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                  {TEMPLATE_STEPS.map((s) => (
+                    <tr key={s.name}>
+                      <td className="py-1 pr-3 text-slate-500">{s.name}</td>
+                      <td className="py-1 pr-3 font-sans text-slate-700 dark:text-slate-300">{s.label}</td>
+                      <td className="py-1 text-right font-bold text-slate-900 dark:text-white">
+                        {formatDim(tv.values[s.name], 2)} <span className="text-[10px] font-normal text-slate-400">{s.unit}</span>
+                      </td>
+                    </tr>
+                  ))}
+                  {(() => {
+                    const lay = endBayLayout(tv.values.outer_end_bay_L_total);
+                    return (
+                      <tr>
+                        <td className="py-1 pr-3 text-slate-500">end_bay_layout</td>
+                        <td className="py-1 pr-3 font-sans text-slate-700 dark:text-slate-300">Outer end bay (L) layout</td>
+                        <td className="py-1 text-right font-bold text-slate-900 dark:text-white">
+                          {lay.split ? `${lay.outer} + ${lay.rib} + ${lay.inner} (split)` : `${formatDim(lay.single, 2)} (single bay)`}{' '}
+                          <span className="text-[10px] font-normal text-slate-400">mm</span>
+                        </td>
+                      </tr>
+                    );
+                  })()}
+                </tbody>
+              </table>
+            </details>
+          )}
         </div>
 
         {/* Right 5 Cols: Real Drawing Visualizer displaying user's tri-view images and bounding overlays */}

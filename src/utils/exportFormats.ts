@@ -97,7 +97,7 @@ function zip(files: { name: string; text: string }[]): Blob {
 const esc = (s: string) =>
   String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string)).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
 
-const HEAD = ['#', 'Dimension', 'Key', 'Views', 'Layer', 'Given', 'Reference', 'Required', 'Change', 'Unit', 'Source'];
+const HEAD = ['#', 'Dimension', 'Key', 'Views', 'Layer', 'Base', 'Reference', 'Target', 'Change', 'Unit', 'Source'];
 const cells = (r: ExportRow) => [r.n, r.label, r.key, r.views, r.layer, r.given, r.reference, r.required, r.change, r.unit, r.source];
 
 // ---------- xlsx ----------
@@ -113,8 +113,8 @@ export function buildXlsx(rows: ExportRow[], meta: ExportMeta): Blob {
   const info: [string, string | number][] = [
     ['Extraction model', meta.model],
     ['Drawing file', meta.file],
-    ['Given capacity (t)', meta.givenTons],
-    ['Required capacity (t)', meta.requiredTons],
+    ['Base capacity (t)', meta.givenTons],
+    ['Target capacity (t)', meta.requiredTons],
     ...(meta.referenceTons != null ? ([['Reference image capacity (t)', meta.referenceTons]] as [string, string | number][]) : []),
     ...(meta.referencePower != null ? ([['Reference image power (MW)', meta.referencePower]] as [string, string | number][]) : []),
     ...(meta.referenceModel ? ([['Reference read by', meta.referenceModel]] as [string, string | number][]) : []),
@@ -168,7 +168,7 @@ export function buildDocx(rows: ExportRow[], meta: ExportMeta): Blob {
   const tc = (t: string, w: number, bold = false) =>
     `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr><w:p><w:r><w:rPr>${bold ? '<w:b/>' : ''}<w:sz w:val="16"/></w:rPr><w:t xml:space="preserve">${esc(t)}</w:t></w:r></w:p></w:tc>`;
   const W = [500, 2900, 1200, 1300, 1000, 1000, 1100, 1000, 700];
-  const head = ['#', 'Dimension', 'Views', 'Layer', 'Given', 'Reference', 'Required', 'Change', 'Unit'];
+  const head = ['#', 'Dimension', 'Views', 'Layer', 'Base', 'Reference', 'Target', 'Change', 'Unit'];
   const tr = (cs: string[], bold = false) => `<w:tr>${cs.map((c, i) => tc(c, W[i], bold)).join('')}</w:tr>`;
   const table = `<w:tbl><w:tblPr><w:tblBorders>${['top', 'left', 'bottom', 'right', 'insideH', 'insideV']
     .map((s) => `<w:${s} w:val="single" w:sz="4" w:space="0" w:color="999999"/>`)
@@ -179,7 +179,7 @@ export function buildDocx(rows: ExportRow[], meta: ExportMeta): Blob {
     p('Dimensions extracted across tri-view images', true, 32) +
     p(`Extraction model: ${meta.model}`) +
     p(`Drawing file: ${meta.file}`) +
-    p(`Given ${meta.givenTons} t → Required ${meta.requiredTons} t`) +
+    p(`Base ${meta.givenTons} t → Target ${meta.requiredTons} t`) +
     (meta.referenceTons != null || meta.referencePower != null
       ? p(`Reference image: ${meta.referenceTons ?? '?'} t, ${meta.referencePower ?? '?'} MW${meta.referenceModel ? ` (read by ${meta.referenceModel})` : ''}`)
       : '') +
@@ -209,7 +209,7 @@ export function buildJson(rows: ExportRow[], meta: ExportMeta): Blob {
         {
           model: meta.model,
           file: meta.file,
-          givenCapacityTons: meta.givenTons,
+          baseCapacityTons: meta.givenTons,
           referenceImage:
             meta.referenceTons != null || meta.referencePower != null
               ? { capacityTons: meta.referenceTons ?? null, powerMW: meta.referencePower ?? null, readBy: meta.referenceModel ?? null }
@@ -223,7 +223,7 @@ export function buildJson(rows: ExportRow[], meta: ExportMeta): Blob {
             key: r.key,
             views: r.views.split(', '),
             layer: r.layer,
-            given: r.given,
+            base: r.given,
             reference: r.reference,
             required: r.required,
             change: r.change,

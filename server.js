@@ -586,6 +586,14 @@ app.post("/api/extract-dwg-dimensions-triview", async (req, res) => {
     const call = usePicked ? openRouterCall(model) : geminiCall;
     const catalogue = Array.isArray(knownDimensions) ? knownDimensions.map((d) => ({ id: String(d.id), label: String(d.label), value: Number(d.value), unit: String(d.unit || "mm") })) : void 0;
     const { dimensions, warnings } = await extractAllViews(call, views, componentType || "SHELL_MECHANICAL", catalogue);
+    if (process.env.DEBUG_PRINT_OUTPUT) {
+      console.log(`
+[DEBUG_PRINT_OUTPUT] model=${usePicked ? model : "gemini-2.5-flash"} dimensions=${dimensions.length}`);
+      console.table(
+        dimensions.map((d) => ({ view: d.viewSource, key: d.key, label: d.label, value: d.valueMm, unit: d.unit }))
+      );
+      if (warnings && warnings.length) console.log("[DEBUG_PRINT_OUTPUT] warnings:", warnings);
+    }
     return res.json({
       success: true,
       extractedDimensions: dimensions,
@@ -626,6 +634,18 @@ async function startServer() {
   }
   app.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`\u{1F680} Full-stack server running on http://localhost:${PORT}`);
+    console.log(`[env check] DEBUG_PRINT_OUTPUT=${process.env.DEBUG_PRINT_OUTPUT ?? "(not set)"}`);
+    const chk = (k) => process.env[k] ? `set (${process.env[k].length} chars)` : "NOT set";
+    console.log(`[env check] OPENROUTER_API_KEY: ${chk("OPENROUTER_API_KEY")} | GEMINI_API_KEY: ${chk("GEMINI_API_KEY")}`);
+    let notifyUrl = process.env.NOTIFY_URL;
+    try {
+      if (notifyUrl) {
+        const u = new URL(notifyUrl);
+        notifyUrl = `${u.origin}${u.pathname}`;
+      }
+    } catch {
+    }
+    console.log(`[env check] NOTIFY_URL=${notifyUrl ?? "(not set)"}`);
   });
 }
 startServer();

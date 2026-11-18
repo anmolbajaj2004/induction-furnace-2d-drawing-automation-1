@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { ShellResult, SHELL_GROUPS, ShellDimension, formatDim, shellDimsToCsv } from '../utils/shellModel';
 import { ShellDrawing, ShellDrawingMode } from './ShellDrawing';
+import { ShellIsoDrawing } from './ShellIsoDrawing';
 import type { PlanShape } from './ShellViewDrawing';
 import { Ruler, Download, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
@@ -13,7 +14,7 @@ const signed = (v: number, decimals = 0) => `${v > 0 ? '+' : ''}${formatDim(v, d
 export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell }) => {
   const [mode, setMode] = useState<ShellDrawingMode>('overlay');
   const [onlyChanged, setOnlyChanged] = useState(false);
-  const [view, setView] = useState<'FRONT' | 'TOP' | 'SIDE'>('FRONT');
+  const [view, setView] = useState<'FRONT' | 'TOP' | 'SIDE' | 'ISO'>('FRONT');
   const [plan, setPlan] = useState<PlanShape>('square');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -33,9 +34,9 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
   };
 
   const modes: { id: ShellDrawingMode; label: string }[] = [
-    { id: 'overlay', label: `Required ${reqT} t + reference outline` },
-    { id: 'required', label: `Required ${reqT} t only` },
-    { id: 'reference', label: `Reference ${refT} t (as given)` },
+    { id: 'overlay', label: `Target ${reqT} t + reference outline` },
+    { id: 'required', label: `Target ${reqT} t only` },
+    { id: 'reference', label: `Reference ${refT} t (base)` },
   ];
 
   const row = (d: ShellDimension) => (
@@ -75,7 +76,7 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Ruler className="w-4 h-4 text-amber-500" />
-            Shell Dimension Changes — Reference {refT} t → Required {reqT} t
+            Shell Dimension Changes — Reference {refT} t → Target {reqT} t
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Every dimension needed to fabricate the shell, recalculated for the selected tonnage. Changed values are highlighted.
@@ -117,6 +118,7 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
               ['FRONT', 'Front elevation'],
               ['TOP', 'Top plan'],
               ['SIDE', 'Side elevation'],
+              ['ISO', 'Isometric'],
             ] as const).map(([v, label]) => (
               <button
                 key={v}
@@ -129,7 +131,7 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
               </button>
             ))}
           </div>
-          {view === 'TOP' && (
+          {(view === 'TOP' || view === 'ISO') && (
             <div className="flex items-center gap-1 text-[11px] font-mono text-slate-600 dark:text-slate-300">
               <span>Plan section:</span>
               {(['square', 'round'] as PlanShape[]).map((p) => (
@@ -162,7 +164,22 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
             </button>
           ))}
         </div>
-        <ShellDrawing req={shell.req} ref0={shell.ref} mode={mode} refCapacity={refT} targetCapacity={reqT} view={view} plan={plan} />
+        {view === 'ISO' ? (
+          <ShellIsoDrawing
+            req={shell.req}
+            ref0={shell.ref}
+            mode={mode}
+            refCapacity={refT}
+            targetCapacity={reqT}
+            plan={plan}
+            hoveredId={hoveredId}
+            onHover={setHoveredId}
+            numberById={Object.fromEntries(shell.dims.map((d, i) => [d.id, i + 1]))}
+            names={Object.fromEntries(shell.dims.map((d) => [d.id, d.label]))}
+          />
+        ) : (
+          <ShellDrawing req={shell.req} ref0={shell.ref} mode={mode} refCapacity={refT} targetCapacity={reqT} view={view} plan={plan} />
+        )}
       </div>
 
       {/* Integrity checks */}
@@ -203,7 +220,7 @@ export const ShellDimensionPanel: React.FC<ShellDimensionPanelProps> = ({ shell 
               <tr>
                 <th className="px-3 py-3 font-semibold text-slate-900 dark:text-slate-200">Dimension</th>
                 <th className="px-3 py-3 font-semibold text-right">Reference ({refT} t)</th>
-                <th className="px-3 py-3 font-semibold text-right text-amber-600 dark:text-amber-400">Required ({reqT} t)</th>
+                <th className="px-3 py-3 font-semibold text-right text-amber-600 dark:text-amber-400">Target ({reqT} t)</th>
                 <th className="px-3 py-3 font-semibold text-right">Change</th>
                 <th className="px-3 py-3 font-semibold text-right">%</th>
                 <th className="px-3 py-3 font-semibold">How it is calculated</th>

@@ -415,8 +415,8 @@ export const DwgImagePasteUploader: React.FC<DwgImagePasteUploaderProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50/60 dark:bg-slate-950/40">
         {(
           [
-            ['Given image size (capacity)', 'Tons', 'e.g. 10', capText, setCapText, 'capacity'],
-            ['Given image power', 'MW', 'e.g. 6', powText, setPowText, 'power'],
+            ['Base image size (capacity)', 'Tons', 'e.g. 10', capText, setCapText, 'capacity'],
+            ['Base image power', 'MW', 'e.g. 6', powText, setPowText, 'power'],
           ] as const
         ).map(([label, unit, ph, text, setText, field]) => (
           <div key={field} className="space-y-1">
@@ -440,7 +440,7 @@ export const DwgImagePasteUploader: React.FC<DwgImagePasteUploaderProps> = ({
           </div>
         ))}
         <p className="sm:col-span-2 text-[11px] text-slate-500 dark:text-slate-400">
-          The capacity and power of the furnace shown in the given three views. Required values in Step 2 are calculated from this size to the required tonnage
+          The capacity and power of the furnace shown in the base three views. Target values in Step 2 are calculated from this size to the required tonnage
           (the value stays at the last valid number if a box is left empty).
         </p>
       </div>
@@ -477,8 +477,8 @@ export const DwgImagePasteUploader: React.FC<DwgImagePasteUploaderProps> = ({
               Reference image and its three views (optional)
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-3xl">
-              A drawing of a furnace of a different size. Its dimensions appear between <b>Given</b> and <b>Required</b> in Step 2, and
-              the required dimensions are then converted <b>only</b> from the given drawing and this reference drawing. Click a card, then press Ctrl+V.
+              A drawing of a furnace of a different size. Its dimensions appear between <b>Base</b> and <b>Target</b> in Step 2, and
+              the required dimensions are then converted <b>only</b> from the base drawing and this reference drawing. Click a card, then press Ctrl+V.
             </p>
           </div>
           {(referenceSet.frontViewImageUrl || referenceSet.topViewImageUrl || referenceSet.sideViewImageUrl || referenceSet.extractedDimensions.length > 0) && (

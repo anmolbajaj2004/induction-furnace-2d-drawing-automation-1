@@ -435,7 +435,7 @@ export function formatDim(v: number, decimals = 0): string {
 export function shellDimsToCsv(shell: ShellResult): string {
   const q = (s: string) => `"${s.replace(/"/g, '""')}"`;
   const rows = [
-    ['Group', 'Dimension', 'Unit', `Reference (${shell.refCapacity} t)`, `Required (${shell.targetCapacity} t)`, 'Change', 'Change %', 'Rule'].map(q).join(','),
+    ['Group', 'Dimension', 'Unit', `Reference (${shell.refCapacity} t)`, `Target (${shell.targetCapacity} t)`, 'Change', 'Change %', 'Rule'].map(q).join(','),
   ];
   shell.dims.forEach((d) => {
     const g = SHELL_GROUPS.find((x) => x.id === d.group)?.title ?? d.group;
