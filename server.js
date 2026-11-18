@@ -371,7 +371,7 @@ var app = express();
 app.use(express.json({ limit: "50mb" }));
 if (process.env.TRUST_PROXY) {
   const tp = process.env.TRUST_PROXY;
-  app.set("trust proxy", /^d+$/.test(tp) ? Number(tp) : tp === "true" ? true : tp);
+  app.set("trust proxy", /^\d+$/.test(tp) ? Number(tp) : tp === "true" ? true : tp);
 }
 registerAuthRoutes(app);
 var PORT = 3e3;

@@ -20,7 +20,7 @@ app.use(express.json({ limit: '50mb' }));
 // otherwise the login rate limits would treat every user as the same address.
 if (process.env.TRUST_PROXY) {
   const tp = process.env.TRUST_PROXY;
-  app.set('trust proxy', /^d+$/.test(tp) ? Number(tp) : tp === 'true' ? true : tp);
+  app.set('trust proxy', /^\d+$/.test(tp) ? Number(tp) : tp === 'true' ? true : tp);
 }
 
 // Login (email OTP, @kognitoai.com only). Must come before the other /api routes: it also guards them.
@@ -280,6 +280,16 @@ app.post('/api/extract-dwg-dimensions-triview', async (req, res) => {
       : undefined;
 
     const { dimensions, warnings } = await extractAllViews(call, views, componentType || 'SHELL_MECHANICAL', catalogue);
+
+    // TEMP DEBUG: set DEBUG_PRINT_OUTPUT=1 in .env to print the extraction output in the server console. Remove when done.
+    if (process.env.DEBUG_PRINT_OUTPUT) {
+      console.log(`\n[DEBUG_PRINT_OUTPUT] model=${usePicked ? model : 'gemini-2.5-flash'} dimensions=${dimensions.length}`);
+      console.table(
+        dimensions.map((d: any) => ({ view: d.viewSource, key: d.key, label: d.label, value: d.valueMm, unit: d.unit }))
+      );
+      if (warnings && warnings.length) console.log('[DEBUG_PRINT_OUTPUT] warnings:', warnings);
+    }
+
     return res.json({
       success: true,
       extractedDimensions: dimensions,
@@ -324,6 +334,17 @@ async function startServer() {
 
   app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`🚀 Full-stack server running on http://localhost:${PORT}`);
+
+    // TEMP DEBUG: confirm .env was loaded. Prints one plain value and only whether secrets are set (never the secrets). Remove when done.
+    console.log(`[env check] DEBUG_PRINT_OUTPUT=${process.env.DEBUG_PRINT_OUTPUT ?? '(not set)'}`);
+    const chk = (k: string) => (process.env[k] ? `set (${process.env[k]!.length} chars)` : 'NOT set');
+    console.log(`[env check] OPENROUTER_API_KEY: ${chk('OPENROUTER_API_KEY')} | GEMINI_API_KEY: ${chk('GEMINI_API_KEY')}`);
+    // NOTIFY_URL printed without any user:password or ?query part, in case a token is embedded in it.
+    let notifyUrl = process.env.NOTIFY_URL;
+    try {
+      if (notifyUrl) { const u = new URL(notifyUrl); notifyUrl = `${u.origin}${u.pathname}`; }
+    } catch { /* not a valid URL: print as is so the problem is visible */ }
+    console.log(`[env check] NOTIFY_URL=${notifyUrl ?? '(not set)'}`);
   });
 }
 
