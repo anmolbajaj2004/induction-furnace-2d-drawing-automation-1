@@ -73,7 +73,7 @@ const P: Record<string, ParamSpec> = {
   t_base: { ref: 22, kind: 'T', step: 1 },
   // fixed
   allow: { ref: 1, kind: 'FIXED', step: 1 },
-  vent_dia: { ref: 50, kind: 'FIXED', step: 1 },
+  vent_dia: { ref: 5, kind: 'FIXED', step: 1 },
   panel_count: { ref: 7, kind: 'FIXED', step: 1 },
   duct_count: { ref: 8, kind: 'FIXED', step: 1 },
 };

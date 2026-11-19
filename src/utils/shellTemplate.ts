@@ -255,19 +255,36 @@ ROWS.forEach((r) => {
   else if (prev && (prev.status !== r.status || prev.step !== r.step || prev.side !== r.side)) BY_LABEL[k] = null;
 });
 
-const SHELL_ID_TO_ROW: Record<string, string> = {
-  ring: 'side_upper_flange_ring_width', // Upper flange ring width = ring_L (2360 at 8.64 t)
-  top_inner: 'front_top_inner_span', // Shell outer casing width (top) = L_out (2260 at 8.64 t)
+/**
+ * Keys the extraction pipeline can produce besides the template's own keys, mapped to the template row that has the
+ * same MEANING (checked against the drawings: the template's shell_ring is the overall top width, shell_top_inner is
+ * the top casing width, front_top_inner_span is the outer casing span).
+ */
+const TEMPLATE_KEY_ALIASES: Record<string, string> = {
+  overallTopWidth: 'shell_flange',
+  topCasingWidth: 'shell_top_inner',
+  shellOuterCasing: 'front_top_inner_span',
+  spoutOpeningWidth: 'shell_spout_w',
+  shellHeight: 'shell_h_shell',
+  totalMachinedHeight: 'shell_h_total',
+  innerCasingDiameter: 'shell_cavity',
+  bottomBaseWidth: 'shell_base_w',
+  coolingDuctPitch: 'shell_duct_array',
+  airVentHoles: 'shell_vent_dia',
+  dim_front_width: 'shell_flange',
+  dim_front_height: 'shell_h_shell',
+  dim_top_spout: 'top_spout_opening_width',
 };
+// The app's own shell ids ring / top_inner name other callouts than the template keys of the same name, so they must
+// never be used to look a template row up.
+const AMBIGUOUS_SHELL_IDS = new Set(['ring', 'top_inner']);
 
-/** Find the template row for an extracted dimension (key first, then an unambiguous label match). */
+/** Find the template row for an extracted dimension: its own key, a known alias, an unambiguous label, then the shell id. */
 export function findTemplateRow(key: string, label?: string, shellId?: string): Row | null {
-  // The template's keys shell_ring / shell_top_inner mean different callouts than the app's catalogue ids of the same
-  // name (template: 2580 / 2360; drawing + app: ring 2360 = ring_L, top_inner 2260 = L_out). Map those two by meaning.
-  if (shellId && SHELL_ID_TO_ROW[shellId] && BY_KEY[SHELL_ID_TO_ROW[shellId]]) return BY_KEY[SHELL_ID_TO_ROW[shellId]];
   if (BY_KEY[key]) return BY_KEY[key];
-  if (shellId && BY_KEY[`shell_${shellId}`]) return BY_KEY[`shell_${shellId}`];
-  if (label) return BY_LABEL[norm(label)] ?? null;
+  if (TEMPLATE_KEY_ALIASES[key] && BY_KEY[TEMPLATE_KEY_ALIASES[key]]) return BY_KEY[TEMPLATE_KEY_ALIASES[key]];
+  if (label && BY_LABEL[norm(label)]) return BY_LABEL[norm(label)];
+  if (shellId && !AMBIGUOUS_SHELL_IDS.has(shellId) && BY_KEY[`shell_${shellId}`]) return BY_KEY[`shell_${shellId}`];
   return null;
 }
 
