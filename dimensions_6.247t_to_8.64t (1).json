@@ -1,0 +1,2171 @@
+{
+  "model": "Anthropic: Claude Sonnet 5.5",
+  "file": "TriView_SHELL_MECHANICAL_Drawing.dwg",
+  "baseCapacityTons": 6.247,
+  "referenceImage": {
+    "capacityTons": 8.64,
+    "powerMW": 6,
+    "readBy": "Anthropic: Claude Sonnet 5.5"
+  },
+  "conversion": "power-law through base and reference images, axis: capacity",
+  "requiredCapacityTons": 8.64,
+  "exported": "18/11/2026, 17:59:48",
+  "dimensions": [
+    {
+      "n": 1,
+      "label": "Top ring overall width",
+      "key": "shell_ring",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 2360,
+      "extracted": 2360,
+      "computed": 2580,
+      "required": 2360,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 2,
+      "label": "Top width between overhangs",
+      "key": "front_top_width_2140",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 2140,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 3,
+      "label": "Casing width at top",
+      "key": "front_top_width_2040",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 2040,
+      "extracted": 2260,
+      "computed": null,
+      "required": 2260,
+      "change": 220,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 4,
+      "label": "Top flange overhang left",
+      "key": "shell_overhang",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 110,
+      "extracted": 110,
+      "computed": 110,
+      "required": 110,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 5,
+      "label": "Top flange overhang right",
+      "key": "front_overhang_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 110,
+      "extracted": 110,
+      "computed": 110,
+      "required": 110,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 6,
+      "label": "Ring step to casing left",
+      "key": "shell_ring_step",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 50,
+      "extracted": 50,
+      "computed": 50,
+      "required": 50,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 7,
+      "label": "Ring step to casing right",
+      "key": "front_ring_step_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 50,
+      "extracted": 50,
+      "computed": 50,
+      "required": 50,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 8,
+      "label": "Spout opening width",
+      "key": "shell_spout_w",
+      "views": [
+        "FRONT",
+        "TOP"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 540,
+      "extracted": 540,
+      "computed": 540,
+      "required": 540,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 9,
+      "label": "Spout box height",
+      "key": "shell_spout_h",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 248,
+      "extracted": 248,
+      "computed": 248,
+      "required": 248,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 10,
+      "label": "Top rim plate thickness",
+      "key": "shell_t_top",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 10,
+      "extracted": 10,
+      "computed": 10,
+      "required": 10,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 11,
+      "label": "Top cone / flange section height",
+      "key": "shell_cone_h",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 334,
+      "extracted": 334,
+      "computed": 334,
+      "required": 334,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 12,
+      "label": "Total height after M/C",
+      "key": "shell_h_total",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1365,
+      "extracted": 1365,
+      "computed": 1365,
+      "required": 1365,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 13,
+      "label": "Shell height",
+      "key": "shell_h_shell",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1218,
+      "extracted": 1218,
+      "computed": 1218,
+      "required": 1218,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 14,
+      "label": "Bottom section height",
+      "key": "front_bottom_section_147",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 147,
+      "extracted": 147,
+      "computed": null,
+      "required": 147,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 15,
+      "label": "Base plate thickness",
+      "key": "shell_t_base",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 22,
+      "extracted": 22,
+      "computed": 22,
+      "required": 22,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 16,
+      "label": "Machining allowance",
+      "key": "shell_allow",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 3,
+      "extracted": 3,
+      "computed": 3,
+      "required": 3,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 17,
+      "label": "Body step to casing left",
+      "key": "shell_body_step",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 40,
+      "extracted": 40,
+      "computed": 40,
+      "required": 40,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 18,
+      "label": "Body step to casing right",
+      "key": "front_body_step_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 40,
+      "extracted": 40,
+      "computed": 40,
+      "required": 40,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 19,
+      "label": "Left edge panel width",
+      "key": "front_panel_left_223",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 223,
+      "extracted": 145,
+      "computed": "145 + 8 + 140",
+      "required": 145,
+      "change": -78,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 20,
+      "label": "Centre panel width",
+      "key": "shell_panel_pitch",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 230,
+      "extracted": 230,
+      "computed": 230,
+      "required": 230,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 21,
+      "label": "Right edge panel width",
+      "key": "front_panel_right_183",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 183,
+      "extracted": 140,
+      "computed": "140 + 8 + 145",
+      "required": 140,
+      "change": -43,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 22,
+      "label": "Vertical rib plate thickness",
+      "key": "shell_t_rib",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 23,
+      "label": "Tier 1 height",
+      "key": "shell_tier1",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 280,
+      "extracted": 280,
+      "computed": 280,
+      "required": 280,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 24,
+      "label": "Tier spacer plate thickness (upper)",
+      "key": "shell_t_spacer",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 25,
+      "label": "Tier 2 height",
+      "key": "shell_tier2",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 280,
+      "extracted": 280,
+      "computed": 280,
+      "required": 280,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 26,
+      "label": "Tier spacer plate thickness (lower)",
+      "key": "front_t_spacer_lower",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 27,
+      "label": "Tier 3 height",
+      "key": "shell_tier3",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 282,
+      "extracted": 282,
+      "computed": 282,
+      "required": 282,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 28,
+      "label": "Bottom ring plate thickness",
+      "key": "shell_t_ring",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 25,
+      "extracted": 25,
+      "computed": 25,
+      "required": 25,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 29,
+      "label": "Cavity clear width",
+      "key": "shell_cavity_clear",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1682.41,
+      "extracted": 1682.41,
+      "computed": 1682.41,
+      "required": 1682.41,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 30,
+      "label": "Internal cavity width",
+      "key": "shell_cavity",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1730,
+      "extracted": 1730,
+      "computed": 1730,
+      "required": 1730,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 31,
+      "label": "Cavity chamfer leg",
+      "key": "front_chamfer_25",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 25,
+      "extracted": 25,
+      "computed": 25,
+      "required": 25,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 32,
+      "label": "Cavity chamfer diagonal size",
+      "key": "front_chamfer_23",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 23,
+      "extracted": null,
+      "computed": 23,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 33,
+      "label": "Air vent hole diameter",
+      "key": "shell_vent_dia",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 5,
+      "extracted": 5,
+      "computed": 5,
+      "required": 5,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 34,
+      "label": "Cooling duct section height",
+      "key": "shell_duct_h",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 100,
+      "extracted": 100,
+      "computed": 100,
+      "required": 100,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 35,
+      "label": "Cooling duct clear gap",
+      "key": "shell_duct_gap",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 175,
+      "extracted": 175,
+      "computed": 175,
+      "required": 175,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 36,
+      "label": "Cooling duct rib thickness",
+      "key": "shell_t_duct_rib",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 37,
+      "label": "Duct array length (183x8)",
+      "key": "shell_duct_array",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1464,
+      "extracted": 1464,
+      "computed": 1464,
+      "required": 1464,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 38,
+      "label": "Cooling duct pitch (8 ducts)",
+      "key": "shell_duct_pitch",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 183,
+      "extracted": 183,
+      "computed": 183,
+      "required": 183,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 39,
+      "label": "Duct side strip left",
+      "key": "shell_duct_side",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 186,
+      "extracted": 186,
+      "computed": 186,
+      "required": 186,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 40,
+      "label": "Duct side strip right",
+      "key": "front_duct_side_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 186,
+      "extracted": 186,
+      "computed": 186,
+      "required": 186,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 41,
+      "label": "Base edge strip left",
+      "key": "shell_base_edge",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 32,
+      "extracted": 32,
+      "computed": 32,
+      "required": 32,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 42,
+      "label": "Base edge strip right",
+      "key": "front_base_edge_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 32,
+      "extracted": 32,
+      "computed": 32,
+      "required": 32,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 43,
+      "label": "Base margin left",
+      "key": "shell_base_margin",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 150,
+      "extracted": 150,
+      "computed": 150,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 44,
+      "label": "Base margin right",
+      "key": "front_base_margin_right",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 150,
+      "extracted": 150,
+      "computed": 150,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 45,
+      "label": "Base clear width",
+      "key": "shell_base_clear",
+      "views": [
+        "FRONT",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1600,
+      "extracted": 1600,
+      "computed": 1600,
+      "required": 1600,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 46,
+      "label": "Water pipe projection beyond base",
+      "key": "shell_pipe_proj",
+      "views": [
+        "FRONT",
+        "TOP"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 180,
+      "extracted": 290,
+      "computed": 290,
+      "required": 290,
+      "change": 110,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 47,
+      "label": "Bottom base mounting width",
+      "key": "shell_base_w",
+      "views": [
+        "FRONT",
+        "TOP",
+        "SIDE"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 1900,
+      "extracted": 1900,
+      "computed": 1900,
+      "required": 1900,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 48,
+      "label": "Overall bottom width",
+      "key": "front_base_overall_2120",
+      "views": [
+        "FRONT"
+      ],
+      "layer": "DIM_FRONT",
+      "base": 2120,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 49,
+      "label": "Overall top width",
+      "key": "top_overall_top_width",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 2360,
+      "extracted": 2580,
+      "computed": 2580,
+      "required": 2580,
+      "change": 220,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 50,
+      "label": "Inner span width",
+      "key": "top_width_2140",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 2140,
+      "extracted": 1560,
+      "computed": 2360,
+      "required": 1560,
+      "change": -580,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 51,
+      "label": "Left edge margin",
+      "key": "top_edge_left_160",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 160,
+      "extracted": 160,
+      "computed": 160,
+      "required": 160,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 52,
+      "label": "Left 183 segment",
+      "key": "top_seg_183_left",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 183,
+      "extracted": 160,
+      "computed": "145 + 8 + 140",
+      "required": 160,
+      "change": -23,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 53,
+      "label": "Rib plate thickness",
+      "key": "top_rib_plate_thickness",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": 8,
+      "computed": null,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 54,
+      "label": "Left 223 segment",
+      "key": "top_seg_223_left",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 223,
+      "extracted": null,
+      "computed": 223,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 55,
+      "label": "Bottom ring plate thickness",
+      "key": "top_bottom_ring_plate_thickness",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 25,
+      "extracted": null,
+      "computed": 25,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 56,
+      "label": "Left 220 segment",
+      "key": "top_seg_220_left",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 220,
+      "extracted": null,
+      "computed": 220,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 57,
+      "label": "Rib thickness 8 (a)",
+      "key": "top_seg_8_a",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 58,
+      "label": "Panel width 230 (1)",
+      "key": "top_panel_width_230_1",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 230,
+      "extracted": 230,
+      "computed": null,
+      "required": 230,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 59,
+      "label": "Rib thickness 8 (b)",
+      "key": "top_seg_8_b",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 60,
+      "label": "Panel width 230 (2)",
+      "key": "top_panel_230_2",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 230,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 61,
+      "label": "Rib thickness 8 (c)",
+      "key": "top_seg_8_c",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 62,
+      "label": "Panel width 230 (3)",
+      "key": "top_panel_230_3",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 230,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 63,
+      "label": "Rib thickness 8 (d)",
+      "key": "top_seg_8_d",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 64,
+      "label": "Right 220 segment",
+      "key": "top_seg_220_right",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 220,
+      "extracted": null,
+      "computed": 220,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 65,
+      "label": "Right 25 segment",
+      "key": "top_seg_25_right",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 25,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 66,
+      "label": "Right 223 segment",
+      "key": "top_seg_223_right",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 223,
+      "extracted": null,
+      "computed": 223,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 67,
+      "label": "Rib thickness 8 (e)",
+      "key": "top_seg_8_e",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 8,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 68,
+      "label": "Right 183 segment",
+      "key": "top_seg_183_right",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 183,
+      "extracted": 160,
+      "computed": "140 + 8 + 145",
+      "required": 160,
+      "change": -23,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 69,
+      "label": "Right edge margin",
+      "key": "top_edge_right_160",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 160,
+      "extracted": 40,
+      "computed": 160,
+      "required": 40,
+      "change": -120,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 70,
+      "label": "Right-top offset",
+      "key": "top_right_10",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 10,
+      "extracted": 40,
+      "computed": null,
+      "required": 40,
+      "change": 30,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 71,
+      "label": "Upper hole edge distance",
+      "key": "top_right_225_upper",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 225,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 72,
+      "label": "Hole array total (230x5)",
+      "key": "top_right_230x5_total",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 1150,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 73,
+      "label": "Hole pitch (5 spaces)",
+      "key": "top_right_230_pitch",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 230,
+      "extracted": 230,
+      "computed": null,
+      "required": 230,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 74,
+      "label": "Lower hole edge distance",
+      "key": "top_right_225_lower",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 225,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 75,
+      "label": "Overall depth",
+      "key": "top_overall_depth_1680",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 1680,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 76,
+      "label": "Pipe spacing",
+      "key": "top_pipe_spacing_150",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 150,
+      "extracted": 150,
+      "computed": 150,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 77,
+      "label": "Corner offset horizontal",
+      "key": "top_corner_40_h",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 40,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 78,
+      "label": "Corner offset vertical",
+      "key": "top_corner_40_v",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 40,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 79,
+      "label": "Left upper margin",
+      "key": "top_left_160_upper",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 160,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 80,
+      "label": "Left upper 180",
+      "key": "top_left_180_upper",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 180,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 81,
+      "label": "Left 240 (1)",
+      "key": "top_left_240_1",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 240,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 82,
+      "label": "Left 240 (2)",
+      "key": "top_left_240_2",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 240,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 83,
+      "label": "Left 240 (3)",
+      "key": "top_left_240_3",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 240,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 84,
+      "label": "Left 240 (4)",
+      "key": "top_left_240_4",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 240,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 85,
+      "label": "Left lower 180",
+      "key": "top_left_180_lower",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 180,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 86,
+      "label": "Left lower margin",
+      "key": "top_left_160_lower",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 160,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 87,
+      "label": "Left vertical span",
+      "key": "top_left_1460",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 1460,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 88,
+      "label": "Bottom left offset",
+      "key": "top_bottom_80_left",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 80,
+      "extracted": 160,
+      "computed": 80,
+      "required": 160,
+      "change": 80,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 89,
+      "label": "Bottom hole array total (220x10)",
+      "key": "top_bottom_2200",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 2200,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 90,
+      "label": "Bottom hole pitch (10 spaces)",
+      "key": "top_bottom_220_pitch",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 220,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 91,
+      "label": "Bottom right offset",
+      "key": "top_bottom_80_right",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 80,
+      "extracted": 125,
+      "computed": 80,
+      "required": 125,
+      "change": 45,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 92,
+      "label": "Spout opening width",
+      "key": "top_spout_opening_width",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 540,
+      "extracted": 540,
+      "computed": 540,
+      "required": 540,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 93,
+      "label": "Spout lower width",
+      "key": "top_spout_300",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 300,
+      "extracted": 300,
+      "computed": 300,
+      "required": 300,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 94,
+      "label": "Spout slot width",
+      "key": "top_spout_150",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 150,
+      "extracted": 150,
+      "computed": null,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 95,
+      "label": "Spout projection",
+      "key": "top_spout_projection_410",
+      "views": [
+        "TOP"
+      ],
+      "layer": "DIM_TOP",
+      "base": 410,
+      "extracted": 410,
+      "computed": 410,
+      "required": 410,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 96,
+      "label": "Upper flange ring overall width",
+      "key": "side_upper_flange_ring_overall_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 2360,
+      "extracted": 2360,
+      "computed": null,
+      "required": 2360,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 97,
+      "label": "Shell casing width (top)",
+      "key": "shell_top_inner",
+      "views": [
+        "SIDE",
+        "FRONT",
+        "TOP"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 2140,
+      "extracted": null,
+      "computed": 2360,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 98,
+      "label": "Top inner width",
+      "key": "side_top_clear_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 2008,
+      "extracted": 2228,
+      "computed": null,
+      "required": 2228,
+      "change": 220,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 99,
+      "label": "Ring step to casing (left)",
+      "key": "side_ring_step_to_casing_left",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 50,
+      "extracted": 50,
+      "computed": 50,
+      "required": 50,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 100,
+      "label": "Ring step to casing (right)",
+      "key": "side_ring_step_right",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 50,
+      "extracted": 50,
+      "computed": 50,
+      "required": 50,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 101,
+      "label": "Casing plate thickness left",
+      "key": "side_wall_thk_left",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 16,
+      "extracted": 16,
+      "computed": 16,
+      "required": 16,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 102,
+      "label": "Casing plate thickness right",
+      "key": "side_wall_thk_right",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 16,
+      "extracted": 16,
+      "computed": 16,
+      "required": 16,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 103,
+      "label": "Top rim plate thickness",
+      "key": "side_top_rim_plate_thickness",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 10,
+      "extracted": 10,
+      "computed": 10,
+      "required": 10,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 104,
+      "label": "Top cone / flange section height",
+      "key": "side_top_cone_flange_section_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 334,
+      "extracted": 334,
+      "computed": 334,
+      "required": 334,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 105,
+      "label": "Flange plate thickness",
+      "key": "side_flange_plate_thk",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 16,
+      "extracted": 16,
+      "computed": 16,
+      "required": 16,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 106,
+      "label": "Tier 1 height",
+      "key": "side_tier_1_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 280,
+      "extracted": 280,
+      "computed": 280,
+      "required": 280,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 107,
+      "label": "Tier spacer plate thickness (upper)",
+      "key": "side_tier_spacer_plate_thickness_upper",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 108,
+      "label": "Tier 2 height",
+      "key": "side_tier_2_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 280,
+      "extracted": 280,
+      "computed": 280,
+      "required": 280,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 109,
+      "label": "Tier spacer plate thickness (lower)",
+      "key": "side_spacer_thk_lower",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 8,
+      "extracted": 8,
+      "computed": 8,
+      "required": 8,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 110,
+      "label": "Tier 3 height",
+      "key": "side_tier_3_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 282,
+      "extracted": 282,
+      "computed": 282,
+      "required": 282,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 111,
+      "label": "Bottom ring plate thickness",
+      "key": "side_bottom_ring_plate_thickness",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 25,
+      "extracted": 25,
+      "computed": 25,
+      "required": 25,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 112,
+      "label": "Active shell height",
+      "key": "side_active_shell_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1218,
+      "extracted": 1218,
+      "computed": 1218,
+      "required": 1218,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 113,
+      "label": "Total assembly height",
+      "key": "side_total_assembly_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1365,
+      "extracted": 1365,
+      "computed": 1365,
+      "required": 1365,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 114,
+      "label": "Base section height",
+      "key": "side_base_section_h",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 147,
+      "extracted": 147,
+      "computed": null,
+      "required": 147,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 115,
+      "label": "Cooling duct section height",
+      "key": "side_cooling_duct_section_height",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 100,
+      "extracted": 100,
+      "computed": 100,
+      "required": 100,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 116,
+      "label": "Base plate thickness",
+      "key": "side_base_plate_thickness",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 22,
+      "extracted": 22,
+      "computed": 22,
+      "required": 22,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 117,
+      "label": "Air vent hole diameter",
+      "key": "side_air_vent_hole_diameter",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 5,
+      "extracted": 5,
+      "computed": 5,
+      "required": 5,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 118,
+      "label": "Internal cavity width",
+      "key": "side_internal_cavity_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1730,
+      "extracted": 1730,
+      "computed": 1730,
+      "required": 1730,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 119,
+      "label": "Cavity clear width",
+      "key": "side_cavity_clear_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1682,
+      "extracted": 1682,
+      "computed": 1682,
+      "required": 1682,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 120,
+      "label": "Chamfer plate size",
+      "key": "side_chamfer_25",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 25,
+      "extracted": 25,
+      "computed": 25,
+      "required": 25,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 121,
+      "label": "Chamfer plate size 23",
+      "key": "side_chamfer_23",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 23,
+      "extracted": null,
+      "computed": 23,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 122,
+      "label": "Duct array length (8 pitches)",
+      "key": "side_duct_array_length_8_pitches",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1464,
+      "extracted": null,
+      "computed": null,
+      "required": null,
+      "change": null,
+      "unit": "mm",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 123,
+      "label": "Duct pitch",
+      "key": "side_duct_pitch",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 180,
+      "extracted": 180,
+      "computed": null,
+      "required": 180,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 124,
+      "label": "Duct pitch count",
+      "key": "shell_duct_count",
+      "views": [
+        "SIDE",
+        "FRONT"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 8,
+      "extracted": null,
+      "computed": 8,
+      "required": null,
+      "change": null,
+      "unit": "nos",
+      "source": "read from drawing; no matching reference dimension or conversion not possible, so no required value"
+    },
+    {
+      "n": 125,
+      "label": "Duct side strip (left)",
+      "key": "side_duct_side_strip_left",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 186,
+      "extracted": 186,
+      "computed": 186,
+      "required": 186,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 126,
+      "label": "Duct side strip (right)",
+      "key": "side_duct_side_right",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 186,
+      "extracted": 186,
+      "computed": 186,
+      "required": 186,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 127,
+      "label": "Base edge strip (left)",
+      "key": "side_base_edge_strip_left",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 32,
+      "extracted": 32,
+      "computed": 32,
+      "required": 32,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 128,
+      "label": "Base edge strip (right)",
+      "key": "side_base_edge_right",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 32,
+      "extracted": 32,
+      "computed": 32,
+      "required": 32,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 129,
+      "label": "Base margin (left)",
+      "key": "side_base_margin_left",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 150,
+      "extracted": 150,
+      "computed": 150,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 130,
+      "label": "Base margin (right)",
+      "key": "side_base_margin_right",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 150,
+      "extracted": 150,
+      "computed": 150,
+      "required": 150,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 131,
+      "label": "Base clear width",
+      "key": "side_base_clear_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1600,
+      "extracted": 1600,
+      "computed": 1600,
+      "required": 1600,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    },
+    {
+      "n": 132,
+      "label": "Base mounting width",
+      "key": "side_base_mounting_width",
+      "views": [
+        "SIDE"
+      ],
+      "layer": "DIM_SIDE",
+      "base": 1900,
+      "extracted": 1900,
+      "computed": 1900,
+      "required": 1900,
+      "change": 0,
+      "unit": "mm",
+      "source": "read from drawing; required converted from the base and reference images only"
+    }
+  ]
+}
